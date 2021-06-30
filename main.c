@@ -11,17 +11,16 @@ typedef struct block {
 	char *previousHash;
 } Block; 
 
-/* Blockchain datatype */ 
-typedef struct blockchain {
-	Block **last_block_ptr;	
-	Block *blocks[];
-} BlockChain;
+Block** make_blockchain();
 
 int main(int argc, char *argv[]) {
+	/*
 	char input[100];
 	puts("What would you like to SHA-256 pad? ");
 	fgets(input, 100, stdin);
 	generate_hash(input);
+	*/
+	Block** my_blockchain = make_blockchain();
 	return 0; 
 }
 
@@ -41,22 +40,31 @@ Block make_block(char* data, char* previousHash) {
 }
 
 Block make_genesis() {
-	return make_block("Genesis Block", NULL);
+	return make_block("Genesis Block", "");
 }
 
-BlockChain make_blockchain() {
+/* A Blockchain is simply an array of Block pointers
+ * The code opts for pointers instead of Blocks themselves 
+ * as it is easier to determine the length of the blockchain 
+ */
+Block** make_blockchain() {
 	Block genesis = make_genesis();
-	BlockChain bc = {
-		&(blocks[0]),
-		{ &genesis }
-	}
+	
+	/* pointer is eight bytes */
+	Block **bc = malloc(8); 
+	bc[0] = &genesis; 
+
 	return bc;
 }
 
-void add_block(Block* new_block, BlockChain* chain) {
-	chain = realloc(chain, sizeof(*chain) + sizeof(new_block));
-	chain->last_block_ptr++;
-	*(chain->last_block_ptr) = new_block; 
+void destroy_blockchain(Block *blockchain[]) {
+	free(blockchain); 
+}
+
+void add_block(Block* new_block, Block** chain) {
+	size_t chain_length = sizeof(chain) / 8; 
+	chain = realloc(chain, sizeof(chain) + 8);
+	chain[chain_length] = new_block;
 }
 
 
