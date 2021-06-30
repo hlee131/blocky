@@ -17,9 +17,9 @@ typedef struct chain {
 
 int main(int argc, char *argv[]) {
 	char input[100];
-	puts("What would you like to SHA-256 preprocess? ");
+	puts("What would you like to SHA-256 pad? ");
 	fgets(input, 100, stdin);
-	puts(preprocess(input));
+	generate_hash(input);
 	return 0; 
 }
 
