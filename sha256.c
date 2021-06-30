@@ -9,7 +9,7 @@ typedef unsigned int hex;
 
 
 /* Generates a SHA-256 Hash */                                                                                                                                                                                   
-void generate_hash(char* original) {                                                                                                                                                                                           
+char* generate_hash(char* original) {                                                                                                                                                                                           
         /* Intializing hash values */                                                                                                                                                                            
         hex const h[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372,                                                                                                                                                    
                               0xa54ff53a, 0x510e527f, 0x9b05688c,                                                                                                                                                
@@ -34,7 +34,7 @@ void generate_hash(char* original) {
 		/* Get chunk */
 		char currentChunk[513]; 
 		strncpy(currentChunk, padded, 512);
-		currentChunk[513] = '\0';
+		currentChunk[512] = '\0';
 
 		printf("chunk %d: %s\n", i, currentChunk);	
 		
@@ -42,7 +42,8 @@ void generate_hash(char* original) {
 		padded += 511; 
 	
 	}
-
+	
+	return "nothing";
                                                                                                                                                  
 }                                                                                                                                                
                                                                                                                                                  
@@ -72,7 +73,7 @@ char* preprocess(char* message) {
 	
 	/* Pad length of original input to 64 bits */
 	char padded[65];
-	padded[65] = '\0';
+	padded[64] = '\0';
 	int i;
 	char *original_len_bin = int_to_binary(original_length);
 	int zeroes_needed = 64 - strlen(original_len_bin); 
