@@ -6,9 +6,9 @@
 
 /* Block datatype */
 typedef struct block {
-	char *hash;
-	char *data;
-	char *previousHash;
+	const char *hash;
+	const char *data;
+	const char *previousHash;
 } Block; 
 
 /* Blockchain datatype */
@@ -18,9 +18,10 @@ typedef struct blockchain {
 } Blockchain;
 
 Blockchain* make_blockchain();
-Block* make_block(char* data, char* previousHash);
+Block* make_block(const char* data, const char* previousHash);
 void add_block(Block* new_block, Blockchain** chain);
 void display_blockchain(Blockchain* chain);
+char* get_last_hash(Blockchain* bc_ptr);
 
 int main(int argc, char *argv[]) {
 	/*
@@ -29,16 +30,27 @@ int main(int argc, char *argv[]) {
 	fgets(input, 100, stdin);
 	generate_hash(input);
 	*/
-	Blockchain* my_blockchain = make_blockchain();
-	display_blockchain(my_blockchain);
-	Block* new_block = make_block("sdf", "sdf");
-	display_blockchain(my_blockchain);
-	add_block(new_block, &my_blockchain);
-	display_blockchain(my_blockchain);
+	/* TODO: Genesis block being overwritten */
+	Blockchain* b = make_blockchain();
+	display_blockchain(b);
+	add_block(make_block("hello world", get_last_hash(b)), &b);
+	add_block(make_block("foo bar", get_last_hash(b)), &b);
+	add_block(make_block("fizz buzz", get_last_hash(b)), &b);
+	add_block(make_block("lorem ipsum", get_last_hash(b)), &b);
+	add_block(make_block("something", get_last_hash(b)), &b);
+	add_block(make_block("something", get_last_hash(b)), &b);
+	add_block(make_block("something", get_last_hash(b)), &b);
+	add_block(make_block("something", get_last_hash(b)), &b);
+	add_block(make_block("something", get_last_hash(b)), &b);
+	display_blockchain(b);
 	return 0; 
 }
 
-Block* make_block(char* data, char* previousHash) {
+char* get_last_hash(Blockchain* bc_ptr) {
+	return bc_ptr->chain[bc_ptr->length - 1]->hash;
+}
+
+Block* make_block(const char* data, const char* previousHash) {
 	/* Fill out some variables 
 	 * SHA-256 hash is 64 characters + null terminator long
    	 * 2 x SHA-256 hashes, one previous and one current
@@ -49,23 +61,23 @@ Block* make_block(char* data, char* previousHash) {
 	new_block->data = data;
 	new_block->previousHash = previousHash;
 	/* Calculate new hash and add to block */
-	/* char toHash[] = "hello";
+	char toHash[strlen(data) + strlen(previousHash) + 1];
+	strcpy(toHash, data);
 	strcat(toHash, previousHash);
-	new_block->hash = generate_hash(toHash);*/
+	new_block->hash = generate_hash(toHash);
 	return new_block;
 }
 
 Block* make_genesis() {
-	return make_block("Gen", "");
+	return make_block("Genesis", "Genesis");
 }
 
 Blockchain* make_blockchain() {
 	
-	Block **blockchain = malloc(8);
-	blockchain[0] = make_genesis();  
-	Blockchain* bc = malloc(8 + sizeof(size_t));
-	bc->chain = blockchain;
-	bc->length = 1;
+	Blockchain* bc = malloc(sizeof(size_t));
+	bc->chain = malloc(0);
+	bc->length = 0;
+	add_block(make_genesis(), &bc);
 	return bc;
 }
 
@@ -75,13 +87,13 @@ void destroy_blockchain(Blockchain* chain) {
 }
 
 void add_block(Block* new_block, Blockchain** chain) {
+	printf("%p ", *chain);
 	*chain = (Blockchain*) realloc(*chain, ++((*chain)->length) * 8 + sizeof(size_t));
-	(*chain)->chain[(*chain)->length - 1] = new_block; 
-	printf("%p", *chain);	
+	(*chain)->chain[(*chain)->length - 1] = new_block;
+	printf("%p\n", *chain); 
 }
 
 void display_blockchain(Blockchain *bc_ptr) {
-	printf("\nReceived: %p \n", bc_ptr);
 	for (int i = 0; i < bc_ptr->length; i++) {
 		printf("Block Number %d\n", i);
 		printf("\tHash: %s\n", bc_ptr->chain[i]->hash);
