@@ -7,9 +7,11 @@
 
 typedef unsigned int hex;
 
+static char next_hash = 'A'; 
 
 /* Generates a SHA-256 Hash */                                                                                                                                                                                   
-char* generate_hash(char* original) {                                                                                                                                                                                           
+char* generate_hash(char* original) { 
+	return "[ hash placeholder ]";                                                                                                                                                                                          
         /* Intializing hash values */                                                                                                                                                                            
         hex const h[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372,                                                                                                                                                    
                               0xa54ff53a, 0x510e527f, 0x9b05688c,                                                                                                                                                
@@ -36,14 +38,13 @@ char* generate_hash(char* original) {
 		strncpy(currentChunk, padded, 512);
 		currentChunk[512] = '\0';
 
-		printf("chunk %d: %s\n", i, currentChunk);	
+		/* printf("chunk %d: %s\n", i, currentChunk);*/
 		
 		/* Next chunk */
 		padded += 511; 
 	
 	}
 	
-	return "nothing";
                                                                                                                                                  
 }                                                                                                                                                
                                                                                                                                                  
