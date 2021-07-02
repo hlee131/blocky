@@ -6,9 +6,9 @@
 
 /* Block datatype */
 typedef struct block {
-	const char *hash;
-	const char *data;
-	const char *previousHash;
+	char *hash;
+	char *data;
+	char *previousHash;
 } Block; 
 
 /* Blockchain datatype */
@@ -24,12 +24,6 @@ void display_blockchain(Blockchain* chain);
 char* get_last_hash(Blockchain* bc_ptr);
 
 int main(int argc, char *argv[]) {
-	/*
-	char input[100];
-	puts("What would you like to SHA-256 pad? ");
-	fgets(input, 100, stdin);
-	generate_hash(input);
-	*/
 	/* TODO: Genesis block being overwritten */
 	Blockchain* b = make_blockchain();
 	display_blockchain(b);
@@ -64,7 +58,10 @@ Block* make_block(const char* data, const char* previousHash) {
 	char toHash[strlen(data) + strlen(previousHash) + 1];
 	strcpy(toHash, data);
 	strcat(toHash, previousHash);
-	new_block->hash = generate_hash(toHash);
+	new_block->hash[65]; 
+	char* hash = generate_hash(toHash);
+	new_block->hash = hash; 
+	free(hash); 
 	return new_block;
 }
 
