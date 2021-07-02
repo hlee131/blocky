@@ -1,89 +1,76 @@
-#include <string.h>
 #include <stdlib.h>
-#include <stdio.h> 
 
-#include "helpers.h"
-#include "sha256.h"
+/* 8 bit byte and 32 bit word respectively */
+typedef unsigned char BYTE;
+typedef unsigned int WORD;
 
-typedef unsigned int hex;
+typedef char[65] SHA256_HASH; 
 
-static char next_hash = 'A'; 
+/* Holds any info needed for SHA256 */
+typedef struct {
 
-/* Generates a SHA-256 Hash */                                                                                                                                                                                   
-char* generate_hash(char* original) { 
-	return "[ hash placeholder ]";                                                                                                                                                                                          
-        /* Intializing hash values */                                                                                                                                                                            
-        hex const h[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372,                                                                                                                                                    
-                              0xa54ff53a, 0x510e527f, 0x9b05688c,                                                                                                                                                
-                              0x1f83d9ab, 0x5be0cd19 };                                                                                                                                                          
-                                                                                                                                                                                                                 
-        /* Intializing round constants */                                                                                                                                                                        
-        hex const k[64] = {                                                                                                                                                                                      
-                0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,                                                                                                         
-                0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,                                                                                                         
-                0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,                                                                                                         
-                0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,                                                                                                         
-                0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,                                                                                                         
-                0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,                                                                                                         
-                0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,                                                                                                         
-                0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2                                          
-        }; 
+	/* Holds current chunk of 512-bit data
+	 * 64 * 8 bit each = 512 bits
+         */
+	BYTE current_chunk[64];
+
+	/* Holds original input length for final
+	 * 64 bits in last chunk
+	 */ 
+	size_t original_length;
+
+	/* Stores the length of current_chunk in bits */
+	size_t current_chunk_length;
+
+	/* Holds the states, i.e. h[0], h[1], etc. */
+	WORD state[8];
+
+} SHA256_CTX; 
+
+/* Creates a context and returns the pointer */
+SHA256_CTX* SHA256_CTX() {
+	SHA256_CTX* ptr = calloc(64 * sizeof(BYTE) + 2 * sizeof(size_t) + 8 * sizeof(WORD));
+	ptr->original_length = 0;
+	ptr->current_chunk_length = 0;
+	/* Initial hash values */ 
+	ptr->state = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
+}
+
+/* Called for each 512-bit chunk of data and modifies the state */
+void do_chunk_loop(SHA256_CTX* ctx) {
+
+}
+
+/* Generates hash
+ * Arguments: String to hash
+ */
+SHA256_HASH generate_hash(BYTE message[]) {
 	
-	char* padded = preprocess(original);
-	int chunks = strlen(padded) / 512;
-	/* Split padded into 512-bit chunks for chunk loop */
-	for (int i = 0; i < chunks; i++) {
-		/* Get chunk */
-		char currentChunk[513]; 
-		strncpy(currentChunk, padded, 512);
-		currentChunk[512] = '\0';
-
-		/* printf("chunk %d: %s\n", i, currentChunk);*/
+	SHA256_CTX* ctx = SHA256_CTX(); 
+	ctx->original_length = strlen(message); 
 		
-		/* Next chunk */
-		padded += 511; 
+	for (int i = 0; i < strlen(message); i++) {
+		ctx->current_chunk[current_chunk_length++] = message[i]; 
+		if (current_chunk_length == 64) {
+			/* Do the chunk loop and reset values */
+			do_chunk_loop(ctx); 
+			ctx->current_chunk_length = 0; 
+		}
+	} 
 	
-	}
+	/* Meaning the 64 bit length value can be fit into the current chunk
+	 * Otherwise, pad current chunk with zeroes and create new chunk for length
+	 */ 
+	if (current_chunk_length < 56) {
+		/* Append extra 1 bit */ 
+		ctx->current_chunk[current_chunk_length++] = 0x80; 
+
+		while (current_chunk_length < 56) {
+			current_chunk[current_chunk_length++] = NULL; 
+		}
+
+	} else {
 	
-                                                                                                                                                 
-}                                                                                                                                                
-                                                                                                                                                 
-/* Preprocess the text for generate_hash */                                                                                                      
-char* preprocess(char* message) {                                                                                                                
-        char* binary = string_to_binary(message);
-        int original_length = strlen(binary);                                                                                                    
-        /* 2 bytes added, one for the '1', one for '\0' */                                                                                       
-        binary = realloc(binary, strlen(binary) + 2);                                                                                            
-        strcpy(binary + strlen(binary), "1");                                                                                                    
-                                                                                                                                                 
-        /* Find next multiple of 512 bits */                                                                                                     
-       	int next_512 = 512;                                                                                                             
-        while (next_512 < strlen(binary)) {                                                                                                      
-                next_512 += 512;                                                                                                                 
-        }
-        binary = realloc(binary, next_512 + 1);                                                                                                  
-        
-	/* Pad to 64 under if needed*/                                                                                   
-	int diff = next_512 - 64 - strlen(binary);
-	char* end = binary + strlen(binary);
-	for (int i = 0; i < diff; i++) {
-		*end = '0';
-		end++;
-	}
-	*end = '\0';
+	}	
 	
-	/* Pad length of original input to 64 bits */
-	char padded[65];
-	padded[64] = '\0';
-	int i;
-	char *original_len_bin = int_to_binary(original_length);
-	int zeroes_needed = 64 - strlen(original_len_bin); 
-	for (i = 0; i < zeroes_needed; i++) {
-		padded[i] = '0';
-	}
-	strcpy(padded + zeroes_needed, original_len_bin);
-	strcpy(binary + next_512 - 64, padded);
-                                                                        
-        return binary;                                                         
-                                                                        
-} 
+}
