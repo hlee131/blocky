@@ -1,8 +1,15 @@
 #include <stdlib.h>
 
-/* 8 bit byte and 32 bit word respectively */
-typedef unsigned char BYTE;
-typedef unsigned int WORD;
+#define ROTR(x, bits) ((x >> bits) | x << (32 - bits))
+#define SHR(x, bits) (x >> bits) 
+
+/* Functions from RFC6234 Section 5.1 (https://datatracker.ietf.org/doc/html/rfc6234#section-5.1) */
+#define CH(x, y, z) ((x & y) ^ (~x & z)) 
+#define MAJ(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
+#define BSIG0(x) = (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22))
+#define BSIG1(x) = (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))
+#define SSIG0(x) = (ROTR(x, 7) ^ ROTR(x, 18) ^ SHR(x, 3))
+#define SSIG1(x) = (ROTR(x, 17) ^ ROTR(x, 19) ^ SHR(x, 10))
 
 typedef char[65] SHA256_HASH; 
 
