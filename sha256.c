@@ -38,7 +38,7 @@ SHA256_CTX* SHA256_CTX() {
 
 /* Called for each 512-bit chunk of data and modifies the state */
 void do_chunk_loop(SHA256_CTX* ctx) {
-
+	ctx->current_chunk_length = 0;
 }
 
 /* Generates hash
@@ -47,30 +47,40 @@ void do_chunk_loop(SHA256_CTX* ctx) {
 SHA256_HASH generate_hash(BYTE message[]) {
 	
 	SHA256_CTX* ctx = SHA256_CTX(); 
-	ctx->original_length = strlen(message); 
+	/* ctx->original_length = strlen(message); */
 		
 	for (int i = 0; i < strlen(message); i++) {
 		ctx->current_chunk[current_chunk_length++] = message[i]; 
 		if (current_chunk_length == 64) {
-			/* Do the chunk loop and reset values */
 			do_chunk_loop(ctx); 
-			ctx->current_chunk_length = 0; 
 		}
 	} 
 	
 	/* Meaning the 64 bit length value can be fit into the current chunk
 	 * Otherwise, pad current chunk with zeroes and create new chunk for length
 	 */ 
-	if (current_chunk_length < 56) {
+	size_t len = ctx->current_chunk_length; 
+	if (len < 56) {
 		/* Append extra 1 bit */ 
-		ctx->current_chunk[current_chunk_length++] = 0x80; 
-
-		while (current_chunk_length < 56) {
-			current_chunk[current_chunk_length++] = NULL; 
-		}
-
+		ctx->current_chunk[len++] = 0x80; 
 	} else {
-	
+		while (len < 64) ctx->current_chunk[len++] = NULL;	
+		do_chunk_loop(ctx); 
 	}	
+
+	while (len < 56) ctx->current_chunk[len++] = NULL;
 	
+	/* Append length in 64-bit big-endian
+	 * unsigned long long is 64 bits 
+	 */ 
+	unsigned long long length_bit = strlen(message) * 8; 
+	for (int i = 1; i <= 8; i++) {
+		int index = 64 - i;
+		int shift = (i - 1) * 8;
+
+		ctx->current_chunk[index] = (length_bit >> shift) & 0xFF; 
+	}
+	/* Run chunk loop on final chunk */
+	do_chunk_loop(ctx); 
+		
 }
