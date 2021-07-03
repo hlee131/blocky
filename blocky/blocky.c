@@ -1,40 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
-#include "sha256.h"
-
-/* Block datatype */
-typedef struct block {
-	char *hash;
-	char *data;
-	char *previousHash;
-} Block; 
-
-/* Blockchain datatype */
-typedef struct blockchain {
-	Block** chain;
-	size_t length; 
-} Blockchain;
-
-Blockchain* make_blockchain();
-Block* make_block(const char* data, const char* previousHash);
-void add_block(Block* new_block, Blockchain** chain);
-void display_blockchain(Blockchain* chain);
-char* get_last_hash(Blockchain* bc_ptr);
-void destroy_blockchain(Blockchain* chain);
-
-int main(int argc, char *argv[]) {
-	/* TODO: Genesis block being overwritten */
-	Blockchain* b = make_blockchain();
-	display_blockchain(b);
-	add_block(make_block("hello world", get_last_hash(b)), &b);
-	add_block(make_block("foo bar", get_last_hash(b)), &b);
-	add_block(make_block("fizz buzz", get_last_hash(b)), &b);
-	display_blockchain(b);
-	destroy_blockchain(b);
-	return 0; 
-}
+#include "../hashing/sha256.h"
+#include "blocky.h"
 
 char* get_last_hash(Blockchain* bc_ptr) {
 	return bc_ptr->chain[bc_ptr->length - 1]->hash;

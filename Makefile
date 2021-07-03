@@ -1,2 +1,2 @@
 all:
-	gcc main.c sha256.c 
+	gcc demo.c blocky/blocky.c hashing/sha256.c 
