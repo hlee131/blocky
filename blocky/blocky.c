@@ -3,6 +3,7 @@
 
 #include "../hashing/sha256.h"
 #include "blocky.h"
+#include "pow.h"
 
 char* get_last_hash(Blockchain* bc_ptr) {
 	return bc_ptr->chain[bc_ptr->length - 1]->hash;
@@ -15,15 +16,15 @@ Block* make_block(const char* data, const char* previousHash) {
 	 */
 	Block* new_block = malloc(sizeof(Block));
 	
+	new_block->nonce = -1; 
 	new_block->data = malloc((strlen(data) + 1) * sizeof(char));
+	new_block->hash = malloc(0);
 	new_block->previousHash = malloc(65 * sizeof(char));
 	strcpy(new_block->data, data);
 	strcpy(new_block->previousHash, previousHash); 
 	
-	char toHash[strlen(data) + strlen(previousHash) + 1];
-	strcpy(toHash, data);
-	strcat(toHash, previousHash);
-	new_block->hash = generate_hash(toHash);
+	/* Mine block and do proof of work */	
+	mine_block(new_block); 		
 
 	return new_block;
 }
@@ -43,15 +44,24 @@ void destroy_blockchain(Blockchain* chain) {
 		free(chain->chain[i]->hash);
 		free(chain->chain[i]->previousHash);
 		free(chain->chain[i]->data);	
-		free(chain->chain[i]);
+		/*free(chain->chain[i]);*/
 	}
 	free(chain->chain);	
 	free(chain);
 }
 
-void add_block(Block* new_block, Blockchain** chain) {
-	*chain = (Blockchain*) realloc(*chain, ++((*chain)->length) * 8 + sizeof(size_t));
-	(*chain)->chain[(*chain)->length - 1] = new_block;
+int add_block(Block* new_block, Blockchain** chain) {
+	/* Verify proof of work before adding to chain */
+	if (!is_valid(new_block)) {
+		/* Return 0 for PoW failed */
+		return 0; 	
+	} else {		
+		*chain = (Blockchain*) realloc(*chain, ++((*chain)->length) * 8 + sizeof(size_t));
+		(*chain)->chain[(*chain)->length - 1] = new_block;
+	
+		/* Return 1 for block added */
+		return 1;
+	}
 }
 
 void display_blockchain(Blockchain *bc_ptr) {

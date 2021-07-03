@@ -5,6 +5,7 @@ typedef struct block {
         char *hash;
         char *data;
         char *previousHash;
+	unsigned int nonce; 
 } Block; 
 
 /* Blockchain datatype */
