@@ -22,19 +22,17 @@ Block* make_block(const char* data, const char* previousHash);
 void add_block(Block* new_block, Blockchain** chain);
 void display_blockchain(Blockchain* chain);
 char* get_last_hash(Blockchain* bc_ptr);
+void destroy_blockchain(Blockchain* chain);
 
 int main(int argc, char *argv[]) {
 	/* TODO: Genesis block being overwritten */
 	Blockchain* b = make_blockchain();
 	display_blockchain(b);
-	add_block(make_block("Genesis", ""), &b);
 	add_block(make_block("hello world", get_last_hash(b)), &b);
 	add_block(make_block("foo bar", get_last_hash(b)), &b);
 	add_block(make_block("fizz buzz", get_last_hash(b)), &b);
-	add_block(make_block("lorem ipsum", get_last_hash(b)), &b);
-	add_block(make_block("something", get_last_hash(b)), &b);
-	add_block(make_block("something", get_last_hash(b)), &b);
 	display_blockchain(b);
+	destroy_blockchain(b);
 	return 0; 
 }
 
@@ -64,15 +62,23 @@ Block* make_block(const char* data, const char* previousHash) {
 
 Blockchain* make_blockchain() {
 	
-	Blockchain* bc = malloc(sizeof(size_t));
+	Blockchain* bc = malloc(sizeof(size_t) + 8);
 	bc->chain = malloc(0);
 	bc->length = 0;
+	add_block(make_block("Genesis", ""), &bc);
 	return bc;
 }
 
 void destroy_blockchain(Blockchain* chain) {
+	/* Free values inside blocks and the blocks */
+	for (int i = 0; i < chain->length; i++) {
+		free(chain->chain[i]->hash);
+		free(chain->chain[i]->previousHash);
+		free(chain->chain[i]->data);	
+		free(chain->chain[i]);
+	}
+	free(chain->chain);	
 	free(chain);
-	/* free blocks too */ 
 }
 
 void add_block(Block* new_block, Blockchain** chain) {
