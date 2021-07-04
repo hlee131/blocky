@@ -28,16 +28,17 @@ int is_valid(Block* blk) {
 
 /* Mine block */  
 void mine_block(Block* blk) {
-	while (!is_valid(blk)) {
+	while (1) {
 		/* Free old generate_hash call */
 		free(blk->hash);
-		blk->nonce++; 
 		
 		/* Formula works for domain for all real integers excluding 0 */
 		int nonce_len = blk->nonce == 0 ? 1 : floor(log10(abs(blk->nonce))); 
 		char toHash[nonce_len + strlen(blk->data) + strlen(blk->previousHash) + 1];
         	sprintf(toHash, "%d%s%s", blk->nonce, blk->data, blk->previousHash);
-        
-		blk->hash = generate_hash(toHash);
+        	blk->hash = generate_hash(toHash);
+	
+		if (is_valid(blk)) break;
+		else blk->nonce++; 
 	}
 }

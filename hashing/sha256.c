@@ -156,6 +156,7 @@ char* generate_hash(BYTE message[]) {
 	/* Run chunk loop on final chunk */
 	do_chunk_loop(ctx); 
 	sprintf(final_digest, HASH_FORMAT, HASH_ARG(ctx->state));
+	free(ctx);
 	return final_digest; 
 		
 }
