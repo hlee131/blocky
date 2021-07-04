@@ -5,7 +5,7 @@
 
 #include "sha256.h"
 
-#define HASH_FORMAT "%x%x%x%x%x%x%x%x"
+#define HASH_FORMAT "%08x%08x%08x%08x%08x%08x%08x%08x%08x"
 #define HASH_ARG(b) b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]
 
 #define ROTR(x, bits) ((x >> bits) | x << (32 - bits))
