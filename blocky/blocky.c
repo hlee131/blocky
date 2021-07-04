@@ -69,8 +69,8 @@ void display_blockchain(Blockchain *bc_ptr) {
 		printf("Block Number %d\n", i);
 		printf("\tHash: %s\n", bc_ptr->chain[i]->hash);
 		printf("\tData: %s\n", bc_ptr->chain[i]->data);
-		printf("\tPrevious Hash: %s\n\n", bc_ptr->chain[i]->previousHash);
-		printf("\tNonce: %d", bc_ptr->chain[i]->nonce);
+		printf("\tPrevious Hash: %s\n", bc_ptr->chain[i]->previousHash);
+		printf("\tNonce: %d\n\n", bc_ptr->chain[i]->nonce);
 	}
 }
 

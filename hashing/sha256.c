@@ -5,7 +5,7 @@
 
 #include "sha256.h"
 
-#define HASH_FORMAT "%08x%08x%08x%08x%08x%08x%08x%08x%08x"
+#define HASH_FORMAT "%08x%08x%08x%08x%08x%08x%08x%08x"
 #define HASH_ARG(b) b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]
 
 #define ROTR(x, bits) ((x >> bits) | x << (32 - bits))
@@ -47,7 +47,7 @@ WORD static const k[64] = { 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x39
 
 /* Creates a context and returns the pointer */
 SHA256_CTX* make_context() {
-	SHA256_CTX* ptr = calloc(1, 64 * sizeof(BYTE) + 1 * sizeof(size_t) + 8 * sizeof(WORD));
+	SHA256_CTX* ptr = (SHA256_CTX *) calloc(1, 64 * sizeof(BYTE) + 1 * sizeof(size_t) + 8 * sizeof(WORD));
 	ptr->current_chunk_length = 0;
 	/* Initial hash values */ 
 	WORD initial[8] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
