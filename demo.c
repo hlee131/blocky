@@ -8,7 +8,6 @@ int main(int argc, char *argv[]) {
         add_block(make_block("foo bar", get_last_hash(b)), &b);
         add_block(make_block("fizz buzz", get_last_hash(b)), &b);
         display_blockchain(b);
-        destroy_blockchain(b);
         return 0; 
 }
 

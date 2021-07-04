@@ -3,4 +3,4 @@ Blocky is a simple, rudimentary blockchain written in C. The goal of this projec
 
 # KNOWN BUGS (TODO)
 1. Genesis Block gets overwritten when the blockchain is longer than 4 blocks.
-2. Freeing individual blocks in `destroy_blockchain` leads to `double free` error.
+2. Fix destroy blockchain method

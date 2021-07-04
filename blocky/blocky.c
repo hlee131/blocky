@@ -17,7 +17,7 @@ Block* make_block(const char* data, const char* previousHash) {
 	Block* new_block = malloc(sizeof(Block));
 	
 	new_block->nonce = -1; 
-	new_block->data = malloc((strlen(data) + 1) * sizeof(char));
+	new_block->data = malloc((strlen(data) + 2) * sizeof(char));
 	new_block->hash = malloc(0);
 	new_block->previousHash = malloc(65 * sizeof(char));
 	strcpy(new_block->data, data);
