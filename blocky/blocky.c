@@ -34,7 +34,7 @@ Blockchain* make_blockchain() {
 	Blockchain* bc = malloc(sizeof(size_t) + 8);
 	bc->chain = malloc(0);
 	bc->length = 0;
-	add_block(make_block("Genesis", ""), &bc);
+	add_block(make_block("Genesis", ""), bc);
 	return bc;
 }
 
@@ -44,20 +44,20 @@ void destroy_blockchain(Blockchain* chain) {
 		free(chain->chain[i]->hash);
 		free(chain->chain[i]->previousHash);
 		free(chain->chain[i]->data);	
-		/*free(chain->chain[i]);*/
+		free(chain->chain[i]);
 	}
 	free(chain->chain);	
 	free(chain);
 }
 
-int add_block(Block* new_block, Blockchain** chain) {
+int add_block(Block* new_block, Blockchain* chain) {
 	/* Verify proof of work before adding to chain */
 	if (!is_valid(new_block)) {
 		/* Return 0 for PoW failed */
 		return 0; 	
 	} else {		
-		*chain = (Blockchain*) realloc(*chain, ++((*chain)->length) * 8 + sizeof(size_t));
-		(*chain)->chain[(*chain)->length - 1] = new_block;
+		chain->chain = realloc(chain->chain, ++(chain->length) * 8 + sizeof(size_t));
+		chain->chain[chain->length - 1] = new_block;
 	
 		/* Return 1 for block added */
 		return 1;

@@ -10,7 +10,7 @@
 /* Represents the mining difficulty (higher requires more work)
  * Value must be 1 or greater 
  */ 
-const static int difficulty = 2;
+const static int difficulty = 3;
 
 /* Validate nonce */
 int is_valid(Block* blk) {

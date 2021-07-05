@@ -16,7 +16,7 @@ typedef struct blockchain {
 
 Blockchain* make_blockchain();
 Block* make_block(const char* data, const char* previousHash);
-int add_block(Block* new_block, Blockchain** chain);
+int add_block(Block* new_block, Blockchain* chain);
 void display_blockchain(Blockchain* chain);
 char* get_last_hash(Blockchain* bc_ptr);
 void destroy_blockchain(Blockchain* chain);
