@@ -5,6 +5,7 @@ Blocky is a simple, basic blockchain written in C. The goal of this project is t
 - Basic blockchain functionality, i.e. blocks and an array of blocks
 - SHA256 implemented without non-standard libraries
 - Proof of work consensus mechanism on blocks 
+- Blockchains can be saved as CSVs (Persistence) 
 
 # Features To Be Implemented: 
 - Transactions 

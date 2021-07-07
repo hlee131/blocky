@@ -20,3 +20,4 @@ int add_block(Block* new_block, Blockchain* chain);
 void display_blockchain(Blockchain* chain);
 char* get_last_hash(Blockchain* bc_ptr);
 void destroy_blockchain(Blockchain* chain);
+void save_blockchain(Blockchain *bc_ptr);

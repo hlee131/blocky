@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <dirent.h>
+#include <errno.h>
 
 #include "../hashing/sha256.h"
 #include "blocky.h"
@@ -71,6 +73,22 @@ void display_blockchain(Blockchain *bc_ptr) {
 		printf("\tData: %s\n", bc_ptr->chain[i]->data);
 		printf("\tPrevious Hash: %s\n", bc_ptr->chain[i]->previousHash);
 		printf("\tNonce: %d\n\n", bc_ptr->chain[i]->nonce);
+	}
+}
+
+void save_blockchain(Blockchain *bc_ptr) {
+	DIR* dir = opendir("saved"); 
+	if (dir) { 
+		FILE* fp = fopen("./saved/demo.csv", "w+");
+		fprintf(fp, "%d\n", bc_ptr->length); 
+		for (int i = 0; i < bc_ptr->length; i++) {
+			Block *blk = bc_ptr->chain[i];
+			fprintf(fp, "%s, %s, %d\n", blk->hash, blk->data, blk->nonce);
+		}
+		fprintf(fp, "\n"); 
+		fclose(fp); 
+	} else {
+		puts("Please create a directory called saved in the current working directory first."); 
 	}
 }
 

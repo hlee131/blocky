@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
         add_block(make_block("marco", get_last_hash(b)), b);
         add_block(make_block("polo", get_last_hash(b)), b);
         add_block(make_block("bye world", get_last_hash(b)), b);
-        display_blockchain(b);
+        save_blockchain(b);
 	destroy_blockchain(b); 
         return 0; 
 }
