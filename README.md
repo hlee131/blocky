@@ -10,3 +10,5 @@ Blocky is a simple, basic blockchain written in C. The goal of this project is t
 # Features To Be Implemented: 
 - Transactions 
 - Wallets 
+- Importing CSVs
+- Command Line Interface (CLI) 
