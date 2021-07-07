@@ -92,3 +92,19 @@ void save_blockchain(Blockchain *bc_ptr) {
 	}
 }
 
+Blockchain* load_blockchain(Blockchain *bc_ptr, char* file_name) {
+	FILE* fp;
+	char buffer[255]; 
+	size_t len = 0;
+	ssize_t read; 
+	Blockchain* b = malloc(sizeof(Blockchain)); 	
+
+	fp = fopen(file_name, "r"); 
+	fscanf(fp, "%d", b->length);
+	b->chain = malloc(b->length * 8);  
+	
+	while ((read = getline(&buffer, &len, fp)) != -1) {
+		
+	}
+
+}
